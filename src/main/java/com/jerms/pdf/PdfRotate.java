@@ -3,7 +3,6 @@ package com.jerms.pdf;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.*;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;

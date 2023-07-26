@@ -1,20 +1,30 @@
 package com.jerms.file;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.File;
+import java.io.IOException;
 
 public class FileRename {
     public static void rename(String path) {
+        System.out.println("STARTING RENAME");
         final File folder = new File(path);
+        if (!folder.exists()) {
+            try {
+                folder.createNewFile();
+                System.out.println("CREATED DESTINATION FOLDER: " + path);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         for (File fileEntry : folder.listFiles()) {
             if (fileNameMap.has(fileEntry.getName())) {
                 File newFile = new File(path + fileNameMap.get(fileEntry.getName()).getAsString());
                 fileEntry.renameTo(newFile);
             }
         }
+        System.out.println("RENAME COMPLETED");
     }
     private static String fileNameStr = "{\"topaz.bcbsnc.07312022.195740.78820.ucds.imagenow.tst.01.0000000001.pdf\": \"Blue_Advantage_Gold_1800_2023.pdf\",\n" +
             "\"topaz.bcbsnc.07312022.195740.78820.ucds.imagenow.tst.01.0000000002.pdf\": \"Blue_Advantage_Gold_Standard_2000_2023.pdf\",\n" +
