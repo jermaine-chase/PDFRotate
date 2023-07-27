@@ -31,26 +31,21 @@ $('#rr-submit').on('click', function() {
         'rename': $('#rename-checkbox').prop('checked')
     };
 
-    $.post('/tools/renameAndRotate', req, function(data) {
-        console.log(data);
-    });
-})
-
-$('#check-market').on('click', function() {
-    let req = {
-        'source': $('#pdf-location').val(),
-        'destination': $('#pdf-destination').val(),
-        'rotate': $('#rotate-checkbox').prop('checked'),
-        'rename': $('#rename-checkbox').prop('checked')
-    };
-
     if (req.rename) {
         req['rename-source'] = $('#rename-source').val();
         req['rename-list'] = $('#cross-walk').val();
     }
 
-    $.post('/tools/renameAndRotate', req, function(data) {
+    $.post('/renameAndRotate', req, function(data) {
         console.log(data);
+        $('#results').html(data);
+    });
+})
+
+$('#check-market').on('click', function() {
+    $.post('/compareMarketName', $('#url-list').val(), function(data) {
+        console.log(data);
+        $('#results').html(data);
     });
 })
 

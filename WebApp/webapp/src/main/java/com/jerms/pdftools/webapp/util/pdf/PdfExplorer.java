@@ -1,6 +1,5 @@
 package com.jerms.pdftools.webapp.util.pdf;
 
-import com.jerms.pdftools.webapp.service.PropertyService;
 import org.apache.commons.text.similarity.JaroWinklerDistance;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -13,7 +12,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class PdfExplorer {
-    public static double compareMarketingName(String pdfUrl) {
+    public static double compareMarketingName(String pdfUrl) throws URISyntaxException {
         String filePath = downLoadPdf(pdfUrl);
         if (filePath != null) {
             String documentText = getDocumentString(filePath);
@@ -34,7 +33,7 @@ public class PdfExplorer {
     private static StringBuilder getPdfMarketingName(String documentText) {
         String[] lines = documentText.split("\n");
         StringBuilder pdfMarketingName = new StringBuilder();
-        for (int idx = 1; !lines[idx].startsWith("Coverage"); idx++) {
+        for (int idx = 1; !lines[idx].startsWith("Coverage") && idx < lines.length; idx++) {
             pdfMarketingName.append(lines[idx].replaceAll("\r", "").replaceAll(" \\| ", "").replaceAll("Integrated", " "));
         }
         pdfMarketingName.delete(0, pdfMarketingName.indexOf(":") + 2);
@@ -55,9 +54,10 @@ public class PdfExplorer {
         return null;
     }
 
-    public static String downLoadPdf(String url) {
+    public static String downLoadPdf(String url) throws URISyntaxException {
         String fileName  = generatePdfName(url);
-        try (InputStream in = new URI(url).toURL().openStream();
+        URI uri = new URI(url);
+        try (InputStream in = uri.toURL().openStream();
              FileOutputStream fos = new FileOutputStream(fileName)) {
             byte[] buffer = new byte[1024];
             int bytesRead;
@@ -66,7 +66,7 @@ public class PdfExplorer {
             }
             System.out.println("PDF downloaded successfully!");
             return fileName;
-        } catch (IOException | URISyntaxException e) {
+        } catch (IOException e) {
             fileName = null;
             System.err.println("PDF download failed! " + e.getMessage());
         }
@@ -85,6 +85,6 @@ public class PdfExplorer {
 
     private static String generatePdfName(String url) {
         String[] urlParts = url.split("/");
-        return PropertyService.pdfDownloadDestination + urlParts[urlParts.length - 1];
+        return urlParts[urlParts.length - 1];
     }
 }
