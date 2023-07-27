@@ -1,7 +1,6 @@
 package com.jerms.pdftools.webapp.util.file;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +9,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-public class FileRename {
+public class RenameFile {
 
     public static JsonObject fileNameMap;
 

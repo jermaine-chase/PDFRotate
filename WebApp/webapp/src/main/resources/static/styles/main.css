@@ -31,11 +31,23 @@ h1 {
     background-color: #ccc;
 }
 
-.tab-content {
+.tab-content,.tab-content2 {
     border: 1px solid #ccc;
     padding: 20px;
     border-radius: 0 0 5px 5px;
     background-color: #f2f2f2;
+}
+
+.plan-name {
+    font-size: 10px;
+    width: 40%;
+}
+
+.warning {
+    border: 1px solid yellow;
+    background-color: #ffffdd;
+    width: 175px;
+    text-align: center;
 }
 
 /* Form styles */
@@ -68,6 +80,16 @@ input[type="checkbox"] {
 
 .btn:hover {
     background-color: #45a049;
+}
+
+#results {
+    font-size: 12px;
+}
+
+span {
+    display: inline-block;
+    align-items: center;
+    width: 30%;
 }
 
 /* Responsive styles */

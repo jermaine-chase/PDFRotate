@@ -1,5 +1,8 @@
 package com.jerms.pdftools.webapp.util.pdf;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.jerms.pdftools.webapp.util.file.ReadExcel;
 import org.apache.commons.text.similarity.JaroWinklerDistance;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -10,34 +13,98 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class PdfExplorer {
-    public static double compareMarketingName(String pdfUrl) throws URISyntaxException {
+    public static double compareMarketingNameGivenUrl(String pdfUrl, String marketingName) {
+        System.out.println("Started at " + LocalDateTime.now());
         String filePath = downLoadPdf(pdfUrl);
         if (filePath != null) {
             String documentText = getDocumentString(filePath);
-
-            StringBuilder pdfMarketingName = getPdfMarketingName(documentText);
+            String pdfMarketingName = getPdfMarketingName(documentText).toString();
             System.out.println(pdfMarketingName);
 
-            String[] urlParts = pdfUrl.split("/");
-            String urlMarketingName = urlParts[urlParts.length - 1].replaceAll("_", " ");
+            String urlMarketingName = marketingName;
+            if (urlMarketingName == null) {
+                String[] urlParts = pdfUrl.split("/");
+                urlMarketingName = urlParts[urlParts.length - 1].replaceAll("_", " ");
+            }
             System.out.println(urlMarketingName);
 
             deletePdf(filePath);
-            return new JaroWinklerDistance().apply(urlMarketingName, pdfMarketingName.toString());
+            System.out.println("Ended at " + LocalDateTime.now());
+            return new JaroWinklerDistance().apply(urlMarketingName, pdfMarketingName);
         }
         return 0.0;
     }
+    /*public static ArrayList<String> compareMarketingNameGivenFile(String fileUrl) throws URISyntaxException {
+        ArrayList<String> output = new ArrayList<>();
+        JsonArray results = ReadExcel.readMappingFromExcel(fileUrl);
+        for (int idx = 0; idx < results.size(); idx++) {
+            JsonObject row = results.get(idx).getAsJsonObject();
+            String url = row.get("P-Stage URL").getAsString();
+            String title = row.get("Title").getAsString();
+            output.add(title + " => Percentage match: "
+                    + (100 - compareMarketingNameGivenUrl(url, title) * 100));
+        }
+        return output;
+    }*/
+
+    public static JsonArray compareMarketingNameGivenFile(String fileUrl) {
+        return ReadExcel.readMappingFromExcel(fileUrl);
+        /*try {
+            // Create a list to store CompletableFuture objects
+            List<CompletableFuture<String>> completableFutures = new ArrayList<>();
+
+            // Number of iterations in the loop
+            int numIterations = 20;
+            int numBatches = (int) Math.ceil(results.size() / numIterations);
+            for (int idx = 0; idx < numBatches; idx++) {
+                for (int i = 0; i < numIterations; i++) {
+                    JsonObject row = results.get(idx * numIterations + i).getAsJsonObject();
+                    String url = row.get("P-Stage URL").getAsString();
+                    String title = row.get("Title").getAsString();
+
+                    // Create and execute CompletableFuture for the method call
+                    CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> title + " => Percentage match: "
+                            + (100 - compareMarketingNameGivenUrl(url, title) * 100));
+                    completableFutures.add(future);
+                }
+
+                // Wait for all CompletableFuture objects to complete (blocking operation)
+                CompletableFuture<Void> allFutures = CompletableFuture.allOf(
+                        completableFutures.toArray(new CompletableFuture[0])
+                );
+                allFutures.get();
+
+                // Retrieve results from the completed CompletableFuture objects
+                for (int i = 0; i < numIterations; i++) {
+                    output.add(completableFutures.get(i).get());
+                }
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            System.err.println("Error checking marketing name!! "+ e.getMessage());
+        }
+        return output;*/
+    }
 
     private static StringBuilder getPdfMarketingName(String documentText) {
-        String[] lines = documentText.split("\n");
-        StringBuilder pdfMarketingName = new StringBuilder();
-        for (int idx = 1; !lines[idx].startsWith("Coverage") && idx < lines.length; idx++) {
-            pdfMarketingName.append(lines[idx].replaceAll("\r", "").replaceAll(" \\| ", "").replaceAll("Integrated", " "));
+        try {
+            String[] lines = documentText.split("\n");
+            StringBuilder pdfMarketingName = new StringBuilder();
+            for (int idx = 1; !lines[idx].startsWith("Coverage"); idx++) {
+                pdfMarketingName.append(lines[idx].replaceAll("\r", ""));
+            }
+            pdfMarketingName.delete(0, pdfMarketingName.indexOf(":") + 2);
+            return pdfMarketingName;
+        } catch (Exception e) {
+            System.err.println("Error getting pdf Marketing Name!! "+ e.getMessage());
+            return new StringBuilder();
         }
-        pdfMarketingName.delete(0, pdfMarketingName.indexOf(":") + 2);
-        return pdfMarketingName;
     }
 
     public static String getDocumentString(String pdfUrl) {
@@ -54,9 +121,16 @@ public class PdfExplorer {
         return null;
     }
 
-    public static String downLoadPdf(String url) throws URISyntaxException {
+    public static String downLoadPdf(String url) {
         String fileName  = generatePdfName(url);
-        URI uri = new URI(url);
+        URI uri = null;
+        try {
+            uri = new URI(url);
+        } catch (URISyntaxException e) {
+            fileName = null;
+            System.err.println("URI Initialization failed! " + e.getMessage());
+            return fileName;
+        }
         try (InputStream in = uri.toURL().openStream();
              FileOutputStream fos = new FileOutputStream(fileName)) {
             byte[] buffer = new byte[1024];

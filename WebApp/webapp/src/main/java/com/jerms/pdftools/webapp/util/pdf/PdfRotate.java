@@ -3,7 +3,7 @@ package com.jerms.pdftools.webapp.util.pdf;
 import com.google.gson.JsonObject;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.*;
-import com.jerms.pdftools.webapp.util.file.FileRename;
+import com.jerms.pdftools.webapp.util.file.RenameFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +35,7 @@ public class PdfRotate {
         output.add(LocalDateTime.now() + ": ROTATE COMPLETE");
 
         if (request.get("rename").getAsBoolean()) {
-            output.addAll(FileRename.rename(request));
+            output.addAll(RenameFile.rename(request));
         }
 
         return output;

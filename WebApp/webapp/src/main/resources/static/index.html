@@ -25,18 +25,18 @@
 <div id="rename-rotate-tab" class="tab-content">
     <h2>Rename and Rotate</h2>
     <label for="pdf-location">PDF Location:</label>
-    <input type="text" id="pdf-location" placeholder="Enter PDF location">
+    <input type="text" id="pdf-location" placeholder="Enter PDF Location">
 
     <label for="pdf-destination">PDF Destination:</label>
-    <input type="text" id="pdf-destination" placeholder="Enter PDF destination">
+    <input type="text" id="pdf-destination" placeholder="Enter PDF Destination">
 
     <label><input type="checkbox" id="rotate-checkbox">Rotate</label>
     <label><input type="checkbox" id="rename-checkbox">Rename</label>
 
     <div id="rename-details" class="hide">
         <label for="rename-source">Rename Details:</label>
-        <input type="text" id="rename-source" placeholder="Enter Cross walk location"> <br/> -- OR -- <br/>
-        <textarea id="cross-walk" rows="4" placeholder="Enter Cross Walk details&#10;sourceName1:destinationName1&#10;sourceName2:destinationName2"></textarea><br/>
+        <input type="text" id="rename-source" placeholder="Enter Cross walk Location"> <br/> -- OR -- <br/>
+        <textarea id="cross-walk" rows="4" placeholder="Enter Cross Walk Details&#10;sourceName1:destinationName1&#10;sourceName2:destinationName2"></textarea><br/>
     </div>
 
     <button class="btn" id="rr-submit">Submit</button>
@@ -46,13 +46,16 @@
 <div id="check-marketing-name-tab" class="tab-content">
     <h2>Check Marketing Name</h2>
     <label for="url-list">List of URLs:</label>
+    <input type="text" id="marketing-file" placeholder="Enter Marketing Name Excel Location"> <br/> -- OR -- <br/>
+    <div class="warning">This is less accurate!!</div><br/>
     <textarea id="url-list" rows="4"  placeholder="Enter URLs"></textarea><br/>
+    <input type="hidden" id="hidden-json">
 
     <button class="btn" id="check-market">Check</button>
 </div>
 
 <hr/>
-<div id="results">
+<div id="results" class="tab-content2">
 </div>
 
 <script src="scripts/main.js"></script>
