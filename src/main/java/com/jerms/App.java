@@ -2,21 +2,32 @@ package com.jerms;
 
 import com.itextpdf.text.DocumentException;
 import com.jerms.file.FileRename;
+import com.jerms.pdf.PdfExplorer;
 import com.jerms.util.Properties;
 import com.jerms.pdf.PdfRotate;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class App
 {
-    final static String sourceFolder = Properties.getProperty("PDF_LOCATION");
-    final static String destinationFolder = Properties.getProperty("PDF_DESTINATION");
+    static String sourceFolder;
+    static String destinationFolder;
     public static void main( String[] args )
     {
         System.out.println("PROGRAM STARTED");
-        final File folder = new File(sourceFolder);
-        listFilesForFolder(folder);
+        Properties.initPropertiesPath("C:\\Users\\JermS\\TEST");
+        sourceFolder = Properties.getProperty("PDF_LOCATION");
+        destinationFolder = Properties.getProperty("PDF_DESTINATION");
+        /*final File folder = new File(sourceFolder);
+        listFilesForFolder(folder);*/
+        List<String> list =  Properties.getPropertyList("PDF_URL_LIST");
+
+        list.forEach( item -> {
+            System.out.println("Percentage match: " + (100 - PdfExplorer.compareMarketingName(item) * 100 ));
+        });
+
         System.out.println("PROGRAM ENDED");
     }
 

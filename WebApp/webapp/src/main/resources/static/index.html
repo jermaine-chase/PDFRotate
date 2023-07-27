@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PDF Tools</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <script src="scripts/lib/jquery.js"></script>
+</head>
+<body>
+<h1>PDF Tools</h1>
+
+<div class="tabs">
+    <!-- Tab navigation --><!-- Home Tab -->
+    <button class="tab-button active" onclick="openTab(event, 'home-tab')">Home</button>
+    <button class="tab-button" onclick="openTab(event, 'rename-rotate-tab')">Rename and Rotate</button>
+    <button class="tab-button" onclick="openTab(event, 'check-marketing-name-tab')">Check Marketing Name</button>
+</div>
+
+<!-- Home Tab -->
+<div id="home-tab" class="tab-content active">
+    <h2>Welcome to PDF Tools</h2>
+    <p>Use this tool to manipulate PDF files as per your requirements.</p>
+</div>
+
+<!-- Rename and Rotate Tab -->
+<div id="rename-rotate-tab" class="tab-content">
+    <h2>Rename and Rotate</h2>
+    <label for="pdf-location">PDF Location:</label>
+    <input type="text" id="pdf-location" placeholder="Enter PDF location">
+
+    <label for="pdf-destination">PDF Destination:</label>
+    <input type="text" id="pdf-destination" placeholder="Enter PDF destination">
+
+    <label><input type="checkbox" id="rotate-checkbox">Rotate</label>
+    <label><input type="checkbox" id="rename-checkbox">Rename</label>
+
+    <div id="rename-details" class="hide">
+        <label for="rename-source">Rename Details:</label>
+        <input type="text" id="rename-source" placeholder="Enter Cross walk location"> <br/> -- OR -- <br/>
+        <textarea id="cross-walk" rows="4" placeholder="Enter Cross Walk details&#10;sourceName1:destinationName1&#10;sourceName2:destinationName2"></textarea><br/>
+    </div>
+
+    <button class="btn" id="rr-submit">Submit</button>
+</div>
+
+<!-- Check Marketing Name Tab -->
+<div id="check-marketing-name-tab" class="tab-content">
+    <h2>Check Marketing Name</h2>
+    <label for="url-list">List of URLs:</label>
+    <textarea id="url-list" rows="4"  placeholder="Enter URLs"></textarea><br/>
+
+    <button class="btn" id="check-market">Check</button>
+</div>
+
+<hr/>
+<div id="results">
+</div>
+
+<script src="scripts/main.js"></script>
+</body>
+</html>
