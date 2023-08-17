@@ -12,6 +12,7 @@
     <!-- Tab navigation --><!-- Home Tab -->
     <button class="tab-button active" onclick="openTab(event, 'home-tab')">Home</button>
     <button class="tab-button" onclick="openTab(event, 'rename-rotate-tab')">Rename and Rotate</button>
+    <button class="tab-button" onclick="openTab(event, 'view-pdf-content-tab')">View PDF Content</button>
     <button class="tab-button" onclick="openTab(event, 'check-marketing-name-tab')">Check Marketing Name</button>
 </div>
 
@@ -50,8 +51,20 @@
     <div class="warning">This is less accurate!!</div><br/>
     <textarea id="url-list" rows="4"  placeholder="Enter URLs"></textarea><br/>
     <input type="hidden" id="hidden-json">
-
+    <fieldset>
+        <label><input type="radio" id="psUrl" name="region" value="psCheck">Check Pstage URL</label>
+        <label><input type="radio" id="prodUrl" name="region" value="prodCheck">Check Production URL</label>
+    </fieldset>
     <button class="btn" id="check-market">Check</button>
+</div>
+
+<!-- View PDF Content Tab -->
+<div id="view-pdf-content-tab" class="tab-content">
+    <h2>View PDF Content</h2>
+    <label for="url-list">PDF Location:</label>
+    <input type="text" id="pdf-file" placeholder="Enter PDF Location"> <br/>
+
+    <button class="btn" id="view-pdf">View Content</button>
 </div>
 
 <hr/>
