@@ -37,7 +37,19 @@ $('#rr-submit').on('click', function() {
         req['rename-list'] = $('#cross-walk').val();
     }
 
-    $.post('/renameAndRotate', req, function(data) {
+    $.post('/renameAndRotate', JSON.stringify(req), function(data) {
+        console.log(data);
+        $('#results').html(data);
+    });
+})
+
+$('#view-pdf').on('click', function() {
+    $('#results').html("");
+    let req = {
+        'file': $('#pdf-file').val()
+    };
+
+    $.post('/getPdfContent', req, function(data) {
         console.log(data);
         $('#results').html(data);
     });
