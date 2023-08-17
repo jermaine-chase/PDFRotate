@@ -40,12 +40,19 @@ h1 {
 
 .plan-name {
     font-size: 10px;
-    width: 40%;
+    width: 40% !important;
 }
 
 .warning {
     border: 1px solid yellow;
     background-color: #ffffdd;
+    width: 175px;
+    text-align: center;
+}
+
+.alert {
+    border: 1px solid darkred;
+    background-color: red;
     width: 175px;
     text-align: center;
 }
