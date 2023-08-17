@@ -41,18 +41,6 @@ public class PdfExplorer {
         }
         return 0.0;
     }
-    /*public static ArrayList<String> compareMarketingNameGivenFile(String fileUrl) throws URISyntaxException {
-        ArrayList<String> output = new ArrayList<>();
-        JsonArray results = ReadExcel.readMappingFromExcel(fileUrl);
-        for (int idx = 0; idx < results.size(); idx++) {
-            JsonObject row = results.get(idx).getAsJsonObject();
-            String url = row.get("P-Stage URL").getAsString();
-            String title = row.get("Title").getAsString();
-            output.add(title + " => Percentage match: "
-                    + (100 - compareMarketingNameGivenUrl(url, title) * 100));
-        }
-        return output;
-    }*/
 
     public static JsonArray compareMarketingNameGivenFile(String fileUrl) {
         return ReadExcel.readMappingFromExcel(fileUrl);
