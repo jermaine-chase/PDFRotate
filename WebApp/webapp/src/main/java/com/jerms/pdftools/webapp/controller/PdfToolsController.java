@@ -23,9 +23,16 @@ public class PdfToolsController {
         return new Gson().toJson(PdfExplorer.compareMarketingNameGivenFile(fileName));
     }
 
+    @PostMapping("/getPdfContent")
+    public String getPdfContent(@RequestBody String input) {
+        String fileName = input.replaceAll("file=", "");
+        return PdfExplorer.getDocumentString(URLDecoder.decode(fileName, StandardCharsets.UTF_8));
+    }
+
     @PostMapping("/renameAndRotate")
     public String renameAndRotatePdfs(@RequestBody String input) {
-        JsonObject request = JsonParser.parseString(input).getAsJsonObject();
+        JsonObject request = JsonParser.parseString(
+                URLDecoder.decode(input.substring(0, input.length() - 1), StandardCharsets.UTF_8)).getAsJsonObject();
         ArrayList<String> output = PdfRotate.rotateAndRename(request);
         return String.join("<br>", output);
     }
