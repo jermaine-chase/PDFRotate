@@ -1,8 +1,12 @@
-package com.jerms.pdftools.webapp.util.pdf;
+package com.jerms.pdftools.webapp.util;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.jerms.pdftools.webapp.util.file.ReadExcel;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.*;
+import com.jerms.pdftools.webapp.model.CrossWalkData;
+import com.jerms.pdftools.webapp.util.ExcelUtil;
+import com.jerms.pdftools.webapp.util.FileUtil;
 import org.apache.commons.text.similarity.JaroWinklerDistance;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -13,13 +17,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
-public class PdfExplorer {
+public class PdfUtil {
     public static double compareMarketingNameGivenUrl(String pdfUrl, String marketingName) {
         System.out.println("Started at " + LocalDateTime.now());
         String filePath = downLoadPdf(pdfUrl);
@@ -39,45 +42,12 @@ public class PdfExplorer {
             System.out.println("Ended at " + LocalDateTime.now());
             return new JaroWinklerDistance().apply(urlMarketingName, pdfMarketingName);
         }
-        return 0.0;
+        // PDF not found case
+        return -1.0;
     }
 
-    public static JsonArray compareMarketingNameGivenFile(String fileUrl) {
-        return ReadExcel.readMappingFromExcel(fileUrl);
-        /*try {
-            // Create a list to store CompletableFuture objects
-            List<CompletableFuture<String>> completableFutures = new ArrayList<>();
-
-            // Number of iterations in the loop
-            int numIterations = 20;
-            int numBatches = (int) Math.ceil(results.size() / numIterations);
-            for (int idx = 0; idx < numBatches; idx++) {
-                for (int i = 0; i < numIterations; i++) {
-                    JsonObject row = results.get(idx * numIterations + i).getAsJsonObject();
-                    String url = row.get("P-Stage URL").getAsString();
-                    String title = row.get("Title").getAsString();
-
-                    // Create and execute CompletableFuture for the method call
-                    CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> title + " => Percentage match: "
-                            + (100 - compareMarketingNameGivenUrl(url, title) * 100));
-                    completableFutures.add(future);
-                }
-
-                // Wait for all CompletableFuture objects to complete (blocking operation)
-                CompletableFuture<Void> allFutures = CompletableFuture.allOf(
-                        completableFutures.toArray(new CompletableFuture[0])
-                );
-                allFutures.get();
-
-                // Retrieve results from the completed CompletableFuture objects
-                for (int i = 0; i < numIterations; i++) {
-                    output.add(completableFutures.get(i).get());
-                }
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            System.err.println("Error checking marketing name!! "+ e.getMessage());
-        }
-        return output;*/
+    public static JsonArray compareMarketingNameGivenFile(CrossWalkData input) {
+        return ExcelUtil.readMappingFromExcel(input);
     }
 
     private static StringBuilder getPdfMarketingName(String documentText) {
@@ -126,7 +96,7 @@ public class PdfExplorer {
             while ((bytesRead = in.read(buffer)) != -1) {
                 fos.write(buffer, 0, bytesRead);
             }
-            System.out.println("PDF downloaded successfully!");
+            // System.out.println("PDF downloaded successfully!");
             return fileName;
         } catch (IOException e) {
             fileName = null;
@@ -138,15 +108,58 @@ public class PdfExplorer {
     private static void deletePdf(String filePath) {
         File fileToDelete = new File(filePath);
 
-        if (fileToDelete.delete()) {
-            System.out.println("File deleted successfully. " + filePath);
-        } else {
-            System.out.println("Failed to delete the file. " + filePath);
-        }
+        fileToDelete.delete();//System.out.println("File deleted successfully. " + filePath);
+
     }
 
     private static String generatePdfName(String url) {
         String[] urlParts = url.split("/");
         return urlParts[urlParts.length - 1];
+    }
+
+    public static ArrayList<String> rotateAndRename(JsonObject request) {
+        ArrayList<String> output = new ArrayList<>();
+        File folder = new File(request.get("source").getAsString());
+        output.add(LocalDateTime.now() + ": STARTING ROTATE");
+        for (final File fileEntry : folder.listFiles()) {
+            if (!fileEntry.isDirectory()) {
+                if (fileEntry.getName().endsWith("pdf")) {
+                    try {
+                        if (request.get("rotate").getAsBoolean()) {
+                            rotate(fileEntry.getAbsolutePath(),
+                                    request.get("destination").getAsString() + fileEntry.getName());
+                        }
+                    } catch (IOException | DocumentException e) {
+                        output.add(LocalDateTime.now().toString() + ": Error rotating " + fileEntry.getName() + "!! " + e.getMessage());
+                    }
+                }
+            }
+        }
+        output.add(LocalDateTime.now() + ": ROTATE COMPLETE");
+
+        if (request.get("rename").getAsBoolean()) {
+            output.addAll(FileUtil.rename(request));
+        }
+
+        return output;
+    }
+
+    private static void rotate(String source, String dest) throws IOException, DocumentException {
+
+        final PdfReader reader = new PdfReader(source);
+        final int pagesCount = reader.getNumberOfPages();
+
+        for (int n = 1; n <= pagesCount; n++) {
+            final PdfDictionary page = reader.getPageN(n);
+            final PdfNumber rotate = page.getAsNumber(PdfName.ROTATE);
+            final int rotation =
+                    rotate == null ? 90 : (rotate.intValue() + 90) % 360;
+
+            page.put(PdfName.ROTATE, new PdfNumber(rotation));
+        }
+
+        PdfStamper stamper = new PdfStamper(reader, Files.newOutputStream(Paths.get(dest)));
+        stamper.close();
+        reader.close();
     }
 }

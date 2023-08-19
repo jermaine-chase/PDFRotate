@@ -1,7 +1,8 @@
-package com.jerms.pdftools.webapp.util.file;
+package com.jerms.pdftools.webapp.util;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.jerms.pdftools.webapp.model.CrossWalkData;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -14,11 +15,11 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
-public class ReadExcel {
-    public static JsonArray readMappingFromExcel(String fileName) {
+public class ExcelUtil {
+    public static JsonArray readMappingFromExcel(CrossWalkData input) {
         JsonArray out = new JsonArray();
 
-        File file = new File(URLDecoder.decode(fileName, StandardCharsets.UTF_8));
+        File file = new File(URLDecoder.decode(input.fileName, StandardCharsets.UTF_8));
 
         // Create a workbook object
         try {
@@ -42,6 +43,7 @@ public class ReadExcel {
                     XSSFCell cell = row.getCell(j);
                     r.addProperty(header.getCell(j).getStringCellValue(), cell.getStringCellValue());
                 }
+                r.addProperty("region", input.region);
                 out.add(r);
             }
         } catch (IOException | InvalidFormatException e) {

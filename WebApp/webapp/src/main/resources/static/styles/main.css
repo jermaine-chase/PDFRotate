@@ -43,14 +43,14 @@ h1 {
     width: 40% !important;
 }
 
-.warning {
+.my-warning {
     border: 1px solid yellow;
     background-color: #ffffdd;
     width: 175px;
     text-align: center;
 }
 
-.alert {
+.my-alert {
     border: 1px solid darkred;
     background-color: red;
     width: 175px;
