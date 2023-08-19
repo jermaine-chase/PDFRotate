@@ -20,8 +20,6 @@ public class App
         Properties.initPropertiesPath("C:\\Users\\JermS\\TEST");
         sourceFolder = Properties.getProperty("PDF_LOCATION");
         destinationFolder = Properties.getProperty("PDF_DESTINATION");
-        /*final File folder = new File(sourceFolder);
-        listFilesForFolder(folder);*/
         List<String> list =  Properties.getPropertyList("PDF_URL_LIST");
 
         list.forEach( item -> {
@@ -46,7 +44,7 @@ public class App
                             PdfRotate.rotate(fileEntry.getAbsolutePath(), destinationFolder + fileEntry.getName());
                         }
                     } catch (IOException | DocumentException e) {
-                        e.printStackTrace();
+                        System.err.println(e);
                     }
                 }
             }

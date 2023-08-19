@@ -37,7 +37,7 @@ public class Properties {
         }
     }
 
-    private static boolean needsInit() throws IOException, URISyntaxException {
+    private static boolean needsInit() throws IOException {
         if (PROPERTIES_PATH == null) {
             return true;
         }
@@ -55,7 +55,7 @@ public class Properties {
             if (needsInit()) {
                 init();
             }
-        } catch (URISyntaxException | IOException e) {
+        } catch (IOException e) {
             System.err.println("Error initializing properties!!! " + e.getMessage());
         }
         return PROPERTIES.getProperty(propertyName);

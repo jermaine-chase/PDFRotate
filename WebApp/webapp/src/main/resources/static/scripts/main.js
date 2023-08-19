@@ -59,7 +59,7 @@ $('#check-market').on('click', async function() {
     $('#results').html("");
     const urlList = $('#url-list').val()
     if (urlList && urlList.trim().length > 0) {
-        const urls = $('#url-list').val().split('\n');
+        const urls = urlList.split('\n');
         try {
             const batchSize = 10;
             const numBatches = Math.ceil(urls.length / batchSize);

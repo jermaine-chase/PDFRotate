@@ -130,7 +130,7 @@ public class PdfUtil {
                                     request.get("destination").getAsString() + fileEntry.getName());
                         }
                     } catch (IOException | DocumentException e) {
-                        output.add(LocalDateTime.now().toString() + ": Error rotating " + fileEntry.getName() + "!! " + e.getMessage());
+                        output.add(LocalDateTime.now() + ": Error rotating " + fileEntry.getName() + "!! " + e.getMessage());
                     }
                 }
             }

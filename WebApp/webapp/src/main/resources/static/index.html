@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>PDF Tools</title>
     <link rel="stylesheet" href="styles/main.css">
@@ -35,9 +35,10 @@
     <label><input type="checkbox" id="rename-checkbox">Rename</label>
 
     <div id="rename-details" class="hide">
-        <label for="rename-source">Rename Details:</label>
-        <input type="text" id="rename-source" placeholder="Enter Cross walk Location"> <br/> -- OR -- <br/>
-        <textarea id="cross-walk" rows="4" placeholder="Enter Cross Walk Details&#10;sourceName1:destinationName1&#10;sourceName2:destinationName2"></textarea><br/>
+        <label for="rename-source">Rename Details:
+            <input type="text" id="rename-source" placeholder="Enter Cross walk Location"> <br/> -- OR -- <br/>
+            <textarea id="cross-walk" rows="4" placeholder="Enter Cross Walk Details&#10;sourceName1:destinationName1&#10;sourceName2:destinationName2"></textarea><br/>
+        </label>
     </div>
 
     <button class="btn" id="rr-submit">Submit</button>
@@ -46,8 +47,9 @@
 <!-- Check Marketing Name Tab -->
 <div id="check-marketing-name-tab" class="tab-content">
     <h2>Check Marketing Name</h2>
-    <label for="url-list">List of URLs:</label>
-    <input type="text" id="marketing-file" placeholder="Enter Marketing Name Excel Location"> <br/> -- OR -- <br/>
+    <label for="url-list">List of URLs:
+        <input type="text" id="marketing-file" placeholder="Enter Marketing Name Excel Location"> <br/> -- OR -- <br/>
+    </label>
     <div class="warning">This is less accurate!!</div><br/>
     <textarea id="url-list" rows="4"  placeholder="Enter URLs"></textarea><br/>
     <input type="hidden" id="hidden-json">
@@ -59,8 +61,9 @@
 <!-- View PDF Content Tab -->
 <div id="view-pdf-content-tab" class="tab-content">
     <h2>View PDF Content</h2>
-    <label for="url-list">PDF Location:</label>
-    <input type="text" id="pdf-file" placeholder="Enter PDF Location"> <br/>
+    <label for="url-list">PDF Location:
+        <input type="text" id="pdf-file" placeholder="Enter PDF Location">
+    </label><br/>
 
     <button class="btn" id="view-pdf">View Content</button>
 </div>
