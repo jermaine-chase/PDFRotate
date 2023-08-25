@@ -56,8 +56,14 @@ public class PdfUtil {
             StringBuilder pdfMarketingName = new StringBuilder();
             for (int idx = 1; !lines[idx].startsWith("Coverage"); idx++) {
                 pdfMarketingName.append(lines[idx].replaceAll("\r", ""));
+                if (lines[idx].contains("Coverage")) {
+                    break;
+                }
             }
             pdfMarketingName.delete(0, pdfMarketingName.indexOf(":") + 2);
+            if (pdfMarketingName.indexOf("Coverage") != -1) {
+                pdfMarketingName.delete(pdfMarketingName.indexOf("Coverage"), pdfMarketingName.length() - 1);
+            }
             return pdfMarketingName;
         } catch (Exception e) {
             System.err.println("Error getting pdf Marketing Name!! "+ e.getMessage());

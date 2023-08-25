@@ -39,6 +39,8 @@ public class PdfToolsController {
     @PostMapping(value = "/compareMarketName")
     public String compareMarketNameAndTitle(@RequestBody MarketingData input) {
         String url = URLDecoder.decode(input.getUrl(), StandardCharsets.UTF_8);
-        return input.getHTMLResponse(PdfUtil.compareMarketingNameGivenUrl(url, input.title));
+        input.percent = PdfUtil.compareMarketingNameGivenUrl(url, input.title);
+        boolean addedToExport = false; // ExcelUtil.addRecordToExportFile(input);
+        return input.getHTMLResponse(addedToExport);
     }
 }
