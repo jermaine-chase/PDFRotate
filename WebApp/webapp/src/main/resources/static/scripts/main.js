@@ -55,6 +55,18 @@ $('#view-pdf').on('click', function() {
     });
 })
 
+$('#view-fields').on('click', function() {
+    $('#results').html("");
+    let req = {
+        'file': $('#pdf-file').val()
+    };
+
+    $.post('/getPdfFields', req, function(data) {
+        console.log(data);
+        $('#results').html(data);
+    });
+})
+
 $('#check-market').on('click', async function() {
     $('#results').html("");
     const urlList = $('#url-list').val()

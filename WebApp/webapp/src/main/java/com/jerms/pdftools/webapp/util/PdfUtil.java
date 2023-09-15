@@ -5,16 +5,11 @@ import com.google.gson.JsonObject;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.*;
 import com.jerms.pdftools.webapp.model.CrossWalkData;
-import com.jerms.pdftools.webapp.util.ExcelUtil;
-import com.jerms.pdftools.webapp.util.FileUtil;
 import org.apache.commons.text.similarity.JaroWinklerDistance;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -85,9 +80,29 @@ public class PdfUtil {
         return null;
     }
 
+    public static ArrayList<String> getFields(String pdfUrl) {
+        ArrayList<String> fields = new ArrayList<>();
+        PdfStamper pdfStamper = null;
+        try {
+            pdfStamper = new PdfStamper(new PdfReader(pdfUrl), new ByteArrayOutputStream());
+            fields.addAll(pdfStamper.getAcroFields().getFields().keySet());
+        } catch (IOException | DocumentException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (pdfStamper != null) {
+                try {
+                    pdfStamper.close();
+                } catch (DocumentException | IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return fields;
+    }
+
     public static String downLoadPdf(String url) {
         String fileName  = generatePdfName(url);
-        URI uri = null;
+        URI uri;
         try {
             uri = new URI(url);
         } catch (URISyntaxException e) {
