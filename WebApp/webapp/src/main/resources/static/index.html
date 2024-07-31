@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>PDF Tools</title>
     <link rel="stylesheet" href="styles/main.css">
@@ -12,6 +12,7 @@
     <!-- Tab navigation --><!-- Home Tab -->
     <button class="tab-button active" onclick="openTab(event, 'home-tab')">Home</button>
     <button class="tab-button" onclick="openTab(event, 'rename-rotate-tab')">Rename and Rotate</button>
+    <button class="tab-button" onclick="openTab(event, 'view-pdf-content-tab')">View PDF Content</button>
     <button class="tab-button" onclick="openTab(event, 'check-marketing-name-tab')">Check Marketing Name</button>
 </div>
 
@@ -34,9 +35,10 @@
     <label><input type="checkbox" id="rename-checkbox">Rename</label>
 
     <div id="rename-details" class="hide">
-        <label for="rename-source">Rename Details:</label>
-        <input type="text" id="rename-source" placeholder="Enter Cross walk Location"> <br/> -- OR -- <br/>
-        <textarea id="cross-walk" rows="4" placeholder="Enter Cross Walk Details&#10;sourceName1:destinationName1&#10;sourceName2:destinationName2"></textarea><br/>
+        <label for="rename-source">Rename Details:
+            <input type="text" id="rename-source" placeholder="Enter Cross walk Location"> <br/> -- OR -- <br/>
+            <textarea id="cross-walk" rows="4" placeholder="Enter Cross Walk Details&#10;sourceName1:destinationName1&#10;sourceName2:destinationName2"></textarea><br/>
+        </label>
     </div>
 
     <button class="btn" id="rr-submit">Submit</button>
@@ -45,13 +47,26 @@
 <!-- Check Marketing Name Tab -->
 <div id="check-marketing-name-tab" class="tab-content">
     <h2>Check Marketing Name</h2>
-    <label for="url-list">List of URLs:</label>
-    <input type="text" id="marketing-file" placeholder="Enter Marketing Name Excel Location"> <br/> -- OR -- <br/>
+    <label for="url-list">List of URLs:
+        <input type="text" id="marketing-file" placeholder="Enter Marketing Name Excel Location"> <br/> -- OR -- <br/>
+    </label>
     <div class="warning">This is less accurate!!</div><br/>
     <textarea id="url-list" rows="4"  placeholder="Enter URLs"></textarea><br/>
     <input type="hidden" id="hidden-json">
-
+    <label><input type="radio" id="psUrl" name="region" value="ps">Pstage URL</label>
+    <label><input type="radio" id="prodUrl" name="region" value="prod" checked>Production URL</label>
     <button class="btn" id="check-market">Check</button>
+</div>
+
+<!-- View PDF Content Tab -->
+<div id="view-pdf-content-tab" class="tab-content">
+    <h2>View PDF Content</h2>
+    <label for="url-list">PDF Location:
+        <input type="text" id="pdf-file" placeholder="Enter PDF Location">
+    </label><br/>
+
+    <button class="btn" id="view-pdf">View Content</button>
+    <button class="btn" id="view-fields">View Fields</button>
 </div>
 
 <hr/>
