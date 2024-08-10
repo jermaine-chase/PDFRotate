@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.jerms.pdftools.webapp.model.CrossWalkData;
 import com.jerms.pdftools.webapp.model.MarketingData;
+import com.jerms.pdftools.webapp.util.FileUtil;
 import com.jerms.pdftools.webapp.util.PdfUtil;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 @RestController
@@ -57,12 +61,15 @@ public class PdfToolsController {
 
     @PostMapping("/upload")
     public String handleFileUpload(@RequestParam("file") MultipartFile file) throws IOException {
-        // Handle the file upload logic here
-        // You can save the file to a specific directory or process it as needed
-
-        // Example: Save the file to a directory
-        // Files.write(Paths.get("uploads/" + file.getOriginalFilename()), file.getBytes());
-
-        return "redirect:/";
+        Path path = Paths.get(FileUtil.UPLOAD_PATH + file.getOriginalFilename());
+        Files.write(path, file.getBytes());
+        JsonObject response = new JsonObject();
+        response.addProperty("path", path.toString());
+        if (Files.exists(path)) {
+            response.addProperty("status", "File uploaded successfully!");
+        } else {
+            response.addProperty("status", "Error during file upload.");
+        }
+        return new Gson().toJson(response);
     }
 }

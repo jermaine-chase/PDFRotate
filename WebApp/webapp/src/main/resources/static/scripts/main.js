@@ -149,3 +149,29 @@ $('#rename-checkbox').on('click', function () {
         $('#rename-details').hide();
     }
 })
+
+let upload = function() {
+    var fileInput = $('#fileInput')[0];
+    var file = fileInput.files[0];
+
+    if (file) {
+        var formData = new FormData();
+        formData.append('file', file);
+
+        $.ajax({
+            type: 'POST',
+            url: '/upload',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                $('#message').text('File uploaded successfully: ' + response);
+            },
+            error: function (error) {
+                $('#message').text('File upload failed: ' + error.statusText);
+            }
+        });
+    } else {
+        $('#message').text('Please select a file to upload.');
+    }
+}

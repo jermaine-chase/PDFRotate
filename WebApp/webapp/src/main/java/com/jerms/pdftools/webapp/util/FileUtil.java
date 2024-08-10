@@ -12,6 +12,7 @@ import java.util.ArrayList;
 public class FileUtil {
 
     public static JsonObject fileNameMap;
+    public static String UPLOAD_PATH = "uploads/";
 
     public static void init(JsonObject request) {
         String details = null;
@@ -69,4 +70,6 @@ public class FileUtil {
         output.add(LocalDateTime.now() + ": RENAME COMPLETED");
         return output;
     }
+
+
 }
