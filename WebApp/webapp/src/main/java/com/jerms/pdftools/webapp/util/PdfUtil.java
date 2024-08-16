@@ -1,7 +1,6 @@
 package com.jerms.pdftools.webapp.util;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.*;
 import com.jerms.pdftools.webapp.model.CrossWalkData;
@@ -120,12 +119,11 @@ public class PdfUtil {
                 fos.write(buffer, 0, bytesRead);
             }
             // System.out.println("PDF downloaded successfully!");
-            return fileName;
         } catch (IOException e) {
             fileName = null;
             System.err.println("PDF download failed! " + e.getMessage());
         }
-        return null;
+        return fileName;
     }
 
     private static void deletePdf(String filePath) {

@@ -1,7 +1,6 @@
 package com.jerms.pdftools.webapp.util;
 
 import com.google.gson.JsonObject;
-import com.jerms.pdftools.webapp.model.CrossWalkData;
 import com.jerms.pdftools.webapp.model.RenameAndRotateInput;
 
 import java.io.File;

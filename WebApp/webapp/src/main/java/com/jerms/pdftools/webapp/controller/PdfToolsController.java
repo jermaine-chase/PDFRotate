@@ -2,7 +2,6 @@ package com.jerms.pdftools.webapp.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.jerms.pdftools.webapp.model.CrossWalkData;
 import com.jerms.pdftools.webapp.model.MarketingData;
 import com.jerms.pdftools.webapp.model.RenameAndRotateInput;
