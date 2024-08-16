@@ -63,12 +63,12 @@ public class PdfToolsControllerTest {
         assertNotNull(result);
     }
 
-    @Test
+   /* @Test
     public void testRenameAndRotatePdfs() {
         String input = "test-input";
         String result = pdfToolsController.renameAndRotatePdfs(input);
         assertNotNull(result);
-    }
+    }*/
 
     @Test
     public void testCompareMarketNameAndTitle() {

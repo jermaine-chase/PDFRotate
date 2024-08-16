@@ -5,7 +5,9 @@ import com.google.gson.JsonObject;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.*;
 import com.jerms.pdftools.webapp.model.CrossWalkData;
+import com.jerms.pdftools.webapp.model.RenameAndRotateInput;
 import org.apache.commons.text.similarity.JaroWinklerDistance;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
@@ -67,7 +69,7 @@ public class PdfUtil {
     }
 
     public static String getDocumentString(String pdfUrl) {
-        try (PDDocument document = PDDocument.load(new File(pdfUrl))) {
+        try (PDDocument document = Loader.loadPDF(new File(pdfUrl))) {
             if (!document.isEncrypted()) {
                 PDFTextStripper textStripper = new PDFTextStripper();
                 return textStripper.getText(document);
@@ -138,17 +140,17 @@ public class PdfUtil {
         return urlParts[urlParts.length - 1];
     }
 
-    public static ArrayList<String> rotateAndRename(JsonObject request) {
+    public static ArrayList<String> rotateAndRename(RenameAndRotateInput request) {
         ArrayList<String> output = new ArrayList<>();
-        File folder = new File(request.get("source").getAsString());
+        File folder = new File(request.source);
         output.add(LocalDateTime.now() + ": STARTING ROTATE");
         for (final File fileEntry : folder.listFiles()) {
             if (!fileEntry.isDirectory()) {
                 if (fileEntry.getName().endsWith("pdf")) {
                     try {
-                        if (request.get("rotate").getAsBoolean()) {
+                        if (request.rotate) {
                             rotate(fileEntry.getAbsolutePath(),
-                                    request.get("destination").getAsString() + fileEntry.getName());
+                                    request.destination + fileEntry.getName());
                         }
                     } catch (IOException | DocumentException e) {
                         output.add(LocalDateTime.now() + ": Error rotating " + fileEntry.getName() + "!! " + e.getMessage());
@@ -158,7 +160,7 @@ public class PdfUtil {
         }
         output.add(LocalDateTime.now() + ": ROTATE COMPLETE");
 
-        if (request.get("rename").getAsBoolean()) {
+        if (request.rename) {
             output.addAll(FileUtil.rename(request));
         }
 

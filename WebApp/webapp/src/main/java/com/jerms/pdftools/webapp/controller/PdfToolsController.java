@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.jerms.pdftools.webapp.model.CrossWalkData;
 import com.jerms.pdftools.webapp.model.MarketingData;
+import com.jerms.pdftools.webapp.model.RenameAndRotateInput;
 import com.jerms.pdftools.webapp.util.FileUtil;
 import com.jerms.pdftools.webapp.util.PdfUtil;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,11 +44,9 @@ public class PdfToolsController {
         return String.join("<br/>", PdfUtil.getFields(pdfUrl));
     }
 
-    @PostMapping("/renameAndRotate")
-    public String renameAndRotatePdfs(@RequestBody String input) {
-        JsonObject request = JsonParser.parseString(
-                URLDecoder.decode(input.substring(0, input.length() - 1), StandardCharsets.UTF_8)).getAsJsonObject();
-        ArrayList<String> output = PdfUtil.rotateAndRename(request);
+    @PostMapping(value = "/renameAndRotate")
+    public String renameAndRotatePdfs(@RequestBody RenameAndRotateInput input) {
+        ArrayList<String> output = PdfUtil.rotateAndRename(input);
         return String.join("<br>", output);
     }
 

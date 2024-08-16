@@ -26,7 +26,7 @@
 <div id="rename-rotate-tab" class="tab-content">
     <h2>Rename and Rotate</h2>
     <label for="pdf-location">PDF Location:</label>
-    <input type="file" id="pdf-location" placeholder="Enter PDF Location">
+    <input type="text" id="pdf-location" placeholder="Enter PDF Location">
 
     <label for="pdf-destination">PDF Destination:</label>
     <input type="text" id="pdf-destination" placeholder="Enter PDF Destination">
@@ -36,7 +36,7 @@
 
     <div id="rename-details" class="hide">
         <label for="rename-source">Rename Details:
-            <input type="file" id="rename-source" placeholder="Enter Cross walk Location"> <br/> -- OR -- <br/>
+            <input type="text" id="rename-source" placeholder="Enter Cross walk Location"> <br/> -- OR -- <br/>
             <textarea id="cross-walk" rows="4" placeholder="Enter Cross Walk Details&#10;sourceName1:destinationName1&#10;sourceName2:destinationName2"></textarea><br/>
         </label>
     </div>
@@ -48,7 +48,7 @@
 <div id="check-marketing-name-tab" class="tab-content">
     <h2>Check Marketing Name</h2>
     <label for="url-list">List of URLs:
-        <input type="file" id="marketing-file" placeholder="Enter Marketing Name Excel Location"> <br/> -- OR -- <br/>
+        <input type="text" id="marketing-file" placeholder="Enter Marketing Name Excel Location"> <br/> -- OR -- <br/>
     </label>
     <div class="warning">This is less accurate!!</div><br/>
     <textarea id="url-list" rows="4"  placeholder="Enter URLs"></textarea><br/>
@@ -62,11 +62,10 @@
 <div id="view-pdf-content-tab" class="tab-content">
     <h2>View PDF Content</h2>
     <label for="url-list">PDF Location:
-        <input type="file" id="pdf-file" placeholder="Enter PDF Location">
+        <input type="text" id="pdf-file" placeholder="Enter PDF Location">
     </label><br/>
 
     <button class="btn" id="view-pdf">View Content</button>
-    <button class="btn" id="view-fields">View Fields</button>
 </div>
 
 <hr/>

@@ -37,9 +37,17 @@ $('#rr-submit').on('click', function() {
         req['rename-list'] = $('#cross-walk').val();
     }
 
-    $.post('/renameAndRotate', JSON.stringify(req), function(data) {
-        console.log(data);
-        $('#results').html(data);
+    $.ajax({
+        url: '/renameAndRotate',
+        type: 'POST',
+        data: JSON.stringify(req),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        async: false,
+        success: function(data) {
+            console.log(data);
+            $('#results').html(data);
+        }
     });
 })
 

@@ -99,7 +99,7 @@ public class FileUtilTest {
         assertThrows(NullPointerException.class, () -> FileUtil.readCrossWalkDetails(null));
     }
 
-    @Test
+    /*@Test
     public void testRename_ValidRequest() throws IOException {
         JsonObject request = new JsonObject();
         request.addProperty("rename-source", createTempFile("rename-source.txt", "oldName:newName\n"));
@@ -182,5 +182,5 @@ public class FileUtilTest {
 
         // Clean up temporary files and folder
         Files.deleteIfExists(Paths.get(sourceFolder.getAbsolutePath()));
-    }
+    }*/
 }

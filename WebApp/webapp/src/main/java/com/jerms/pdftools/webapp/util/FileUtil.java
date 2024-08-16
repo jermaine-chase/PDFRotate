@@ -1,6 +1,8 @@
 package com.jerms.pdftools.webapp.util;
 
 import com.google.gson.JsonObject;
+import com.jerms.pdftools.webapp.model.CrossWalkData;
+import com.jerms.pdftools.webapp.model.RenameAndRotateInput;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,17 +16,17 @@ public class FileUtil {
     public static JsonObject fileNameMap;
     public static String UPLOAD_PATH = "uploads/";
 
-    public static void init(JsonObject request) {
+    public static void init(RenameAndRotateInput request) {
         String details = null;
-        String path = request.get("rename-source").getAsString();
-        if (request.has("rename-source") && !path.isBlank()) {
+        String path = request.renameSource;
+        if (path != null && !path.isBlank()) {
             try {
                 details = readFileContents(path);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        } else if (request.has("cross-walk") && !request.get("cross-walk").getAsString().isBlank()) {
-            details = request.get("cross-walk").getAsString();
+        } else if (request.renameList != null && !request.renameList.isBlank()) {
+            details = request.renameList;
         }
 
         if (details != null) {
@@ -47,9 +49,9 @@ public class FileUtil {
         return crossWalk;
     }
 
-    public static ArrayList<String> rename(JsonObject request) {
+    public static ArrayList<String> rename(RenameAndRotateInput request) {
         init(request);
-        String path = request.get("destination").getAsString();
+        String path = request.destination;
         ArrayList<String> output = new ArrayList<>();
         output.add(LocalDateTime.now() + ": STARTING RENAME");
         final File folder = new File(path);
