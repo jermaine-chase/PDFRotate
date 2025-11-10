@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Tools - Professional PDF Processing Suite</title>
+    <link rel="stylesheet" href="./styles/main.css">
+</head>
+<body>
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+</div>
+
+<!-- Main Container -->
+<div class="main-container">
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <span class="logo-icon">📄</span>
+                <h1 class="app-title">PDF Tools</h1>
+            </div>
+            <span class="header-subtitle">Professional PDF Processing Suite</span>
+        </div>
+    </header>
+
+    <!-- Tab Navigation -->
+    <nav class="tab-navigation">
+        <button class="tab-button active" onclick="openTab(event, 'home-tab')">
+            <span class="tab-icon">🏠</span>
+            <span class="tab-text">Home</span>
+        </button>
+        <button class="tab-button" onclick="openTab(event, 'rename-rotate-tab')">
+            <span class="tab-icon">🔄</span>
+            <span class="tab-text">Rename & Rotate</span>
+        </button>
+        <button class="tab-button" onclick="openTab(event, 'view-pdf-content-tab')">
+            <span class="tab-icon">👁️</span>
+            <span class="tab-text">View Content</span>
+        </button>
+        <button class="tab-button" onclick="openTab(event, 'check-marketing-name-tab')">
+            <span class="tab-icon">✔️</span>
+            <span class="tab-text">Check Names</span>
+        </button>
+    </nav>
+
+    <!-- Tab Content Container -->
+    <div class="content-wrapper">
+        <!-- Home Tab -->
+        <div id="home-tab" class="tab-content active">
+            <div class="welcome-container">
+                <div class="welcome-icon">🎯</div>
+                <h2 class="welcome-title">Welcome to PDF Tools</h2>
+                <p class="welcome-description">
+                    Your comprehensive solution for PDF manipulation and processing.
+                    Select a tool from the tabs above to get started.
+                </p>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🔄</div>
+                        <h3>Rename & Rotate</h3>
+                        <p>Batch rename and rotate multiple PDF files with custom mappings</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">👁️</div>
+                        <h3>View Content</h3>
+                        <p>Extract and view PDF content and form fields</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">✔️</div>
+                        <h3>Check Names</h3>
+                        <p>Validate marketing names from URLs or Excel files</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Batch Processing</h3>
+                        <p>Process multiple files simultaneously with progress tracking</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rename and Rotate Tab -->
+        <div id="rename-rotate-tab" class="tab-content">
+            <div class="tab-header">
+                <h2 class="tab-title">Rename and Rotate PDFs</h2>
+                <p class="tab-description">Process multiple PDF files with rotation and renaming operations</p>
+            </div>
+
+            <div class="form-container">
+                <div class="form-section">
+                    <h3 class="section-title">File Selection</h3>
+
+                    <div class="form-group">
+                        <label for="pdf-location" class="form-label">
+                            <span class="label-icon">📁</span>
+                            PDF Source Location
+                        </label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="pdf-location" class="form-input" placeholder="Select source directory" readonly style="flex: 1;">
+                            <button type="button" id="btn-pick-source" class="btn btn-outline" style="white-space: nowrap;">
+                                <span class="btn-icon">📁</span>
+                                Browse
+                            </button>
+                        </div>
+                        <span class="form-hint">Click Browse to select directory containing PDF files</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pdf-destination" class="form-label">
+                            <span class="label-icon">📂</span>
+                            PDF Destination
+                        </label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="pdf-destination" class="form-input" placeholder="Select destination directory" readonly style="flex: 1;">
+                            <button type="button" id="btn-pick-destination" class="btn btn-outline" style="white-space: nowrap;">
+                                <span class="btn-icon">📂</span>
+                                Browse
+                            </button>
+                        </div>
+                        <span class="form-hint">Click Browse to select where processed files will be saved</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pdf-files" class="form-label">
+                            <span class="label-icon">📎</span>
+                            Or Select Files Directly
+                        </label>
+                        <input type="file" id="pdf-files" class="file-input" multiple accept=".pdf">
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="section-title">Processing Options</h3>
+
+                    <div class="options-grid">
+                        <div class="option-card">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="rotate-checkbox">
+                                <span class="checkbox-custom"></span>
+                                <div class="option-content">
+                                    <span class="option-title">Rotate PDFs</span>
+                                    <span class="option-description">Rotate all pages in PDFs</span>
+                                </div>
+                            </label>
+                            <div id="rotate-options" class="sub-options" style="display: none;">
+                                <label for="rotation-angle" class="form-label">Rotation Angle</label>
+                                <select id="rotation-angle" class="form-select">
+                                    <option value="90">90° Clockwise</option>
+                                    <option value="180">180°</option>
+                                    <option value="270">270° Clockwise</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="option-card">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="rename-checkbox">
+                                <span class="checkbox-custom"></span>
+                                <div class="option-content">
+                                    <span class="option-title">Rename PDFs</span>
+                                    <span class="option-description">Apply custom naming rules</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="rename-details" class="form-section" style="display: none;">
+                    <h3 class="section-title">Rename Configuration</h3>
+
+                    <div class="form-group">
+                        <label for="rename-source" class="form-label">
+                            <span class="label-icon">📋</span>
+                            Crosswalk CSV File
+                        </label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="rename-source" class="form-input" placeholder="Select CSV file" readonly style="flex: 1;">
+                            <button type="button" id="btn-pick-crosswalk" class="btn btn-outline" style="white-space: nowrap;">
+                                <span class="btn-icon">📄</span>
+                                Browse
+                            </button>
+                        </div>
+                        <span class="form-hint">CSV format: oldName,newName (one mapping per line)</span>
+                    </div>
+
+                    <div class="separator-or">
+                        <span>OR</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cross-walk" class="form-label">
+                            <span class="label-icon">✏️</span>
+                            Manual Crosswalk Mapping
+                        </label>
+                        <textarea id="cross-walk" class="form-textarea" rows="6"
+                                  placeholder="Enter rename mappings (one per line):&#10;oldName1:newName1&#10;oldName2:newName2&#10;oldName3:newName3"></textarea>
+                        <span class="form-hint">Format: originalName:newName (without .pdf extension)</span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-secondary" onclick="resetRenameRotateForm()">
+                        <span class="btn-icon">↺</span>
+                        Reset
+                    </button>
+                    <button class="btn btn-primary" id="rr-submit">
+                        <span class="btn-icon">⚙️</span>
+                        Process PDFs
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- View PDF Content Tab -->
+        <div id="view-pdf-content-tab" class="tab-content">
+            <div class="tab-header">
+                <h2 class="tab-title">View PDF Fillable Field Details</h2>
+                <p class="tab-description">Extract text content and form fields from PDF files</p>
+            </div>
+
+            <div class="form-container">
+                <div class="form-section">
+                    <h3 class="section-title">Select PDF File</h3>
+
+                    <div class="form-group">
+                        <label for="pdf-file" class="form-label">
+                            <span class="label-icon">📄</span>
+                            PDF File
+                        </label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="pdf-file" class="form-input" placeholder="Select PDF file" readonly style="flex: 1;">
+                            <button type="button" id="btn-pick-pdf-file" class="btn btn-outline" style="white-space: nowrap;">
+                                <span class="btn-icon">📁</span>
+                                Browse
+                            </button>
+                        </div>
+                        <span class="form-hint">Click Browse to select a PDF file</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pdf-file-upload" class="form-label">
+                            <span class="label-icon">📤</span>
+                            Or Upload File
+                        </label>
+                        <input type="file" id="pdf-file-upload" class="file-input" accept=".pdf">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-outline" id="view-pdf">
+                        <span class="btn-icon">📖</span>
+                        View Content
+                    </button>
+                    <button class="btn btn-primary" id="view-fields">
+                        <span class="btn-icon">📝</span>
+                        View Form Fields
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Check Marketing Name Tab -->
+        <div id="check-marketing-name-tab" class="tab-content">
+            <div class="tab-header">
+                <h2 class="tab-title">Check Marketing Names (Client-side)</h2>
+                <p class="tab-description">Download PDFs by URL, extract marketing name and compare to expected names from URL or uploaded CSV/XLSX.</p>
+            </div>
+
+            <div class="form-container">
+                <div class="form-section">
+                    <h3 class="section-title">PDF Sources</h3>
+
+                    <div class="form-group">
+                        <label for="download-destination" class="form-label">
+                            <span class="label-icon">📂</span>
+                            PDF Destination
+                        </label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="download-destination" class="form-input" placeholder="Select destination directory" readonly style="flex: 1;">
+                            <button type="button" id="btn-pick-download-destination" class="btn btn-outline" style="white-space: nowrap;">
+                                <span class="btn-icon">📂</span>
+                                Browse
+                            </button>
+                        </div>
+                        <span class="form-hint">Click Browse to select where processed files will be saved</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label"><span class="label-icon">🔗</span>URLs (one per line)</label>
+                        <textarea id="cm-url-list" class="form-textarea" rows="6"
+                                  placeholder="https://example.com/file1.pdf&#10;https://example.com/file2.pdf?name=ExpectedName"></textarea>
+                        <span class="form-hint">If a URL contains a name (query param `name` or last path segment) it will be used as expected name unless overridden by uploaded file.</span>
+                    </div>
+
+                    <div class="separator-or"><span>OR</span></div>
+
+                    <div class="form-group">
+                        <label class="form-label"><span class="label-icon">📤</span>Upload CSV / Excel with columns `url` and `expectedName` (optional)</label>
+                        <div style="display:flex;gap:10px;">
+                            <input type="text" id="cm-mapping-file-display" class="form-input" placeholder="Select CSV/XLSX file" readonly style="flex:1;">
+                            <button type="button" id="cm-pick-mapping" class="btn btn-outline">Browse</button>
+                        </div>
+                        <input type="file" id="cm-mapping-file" accept=".csv,.xlsx,.xls" style="display:none">
+                        <span class="form-hint">CSV headers: `url,expectedName` or `url,name` (expectedName optional)</span>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="section-title">Options</h3>
+
+                    <div class="form-group">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="cm-download-checkbox" checked>
+                            <span class="checkbox-custom"></span>
+                            <div class="option-content">
+                                <span class="option-title">Download PDFs</span>
+                                <span class="option-description">Trigger browser download for each PDF (user chooses save location)</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label"><span class="label-icon">🔎</span>Search mode</label>
+                        <select id="cm-search-mode" class="form-select">
+                            <option value="contains">Check expected name appears (case-insensitive)</option>
+                            <option value="label">Search for label "Marketing Name" and capture following text</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-secondary" id="cm-clear">Clear</button>
+                    <button class="btn btn-primary" id="cm-run">Download & Check</button>
+                </div>
+            </div>
+
+            <div id="cm-results" class="results-container" style="display:none; margin-top:16px;">
+                <div class="results-header">
+                    <h3 class="results-title">Results</h3>
+                    <button class="btn-close" id="cm-close-results">×</button>
+                </div>
+
+                <div id="cm-summary" class="results-summary">
+                    <div>Total: <span id="cm-total">0</span></div>
+                    <div>Matches: <span id="cm-matches">0</span></div>
+                    <div>Mismatch/Errors: <span id="cm-fails">0</span></div>
+                </div>
+
+                <div id="cm-results-list" class="results-list" style="max-height:360px; overflow:auto; margin-top:8px;"></div>
+
+                <div class="results-footer" style="margin-top:8px;">
+                    <button class="btn btn-outline" id="cm-clear-results">Clear</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="results-container" class="results-container" style="display: none;">
+        <div class="results-header">
+            <h3 class="results-title">Processing Results</h3>
+            <button class="btn-close" onclick="closeResults()">×</button>
+        </div>
+
+        <div class="results-summary" id="resultsSummary">
+            <div class="summary-stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalFiles">0</div>
+                    <div class="stat-label">Total Files</div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-value" id="successCount">0</div>
+                    <div class="stat-label">Successful</div>
+                </div>
+                <div class="stat-card error">
+                    <div class="stat-value" id="errorCount">0</div>
+                    <div class="stat-label">Failed</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="results" class="results-list"></div>
+
+        <div class="results-footer">
+            <button class="btn btn-outline" onclick="clearResults()">Clear</button>
+            <button class="btn btn-primary" onclick="downloadAllResults()">Download All</button>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"></script>
+<script src="https://unpkg.com/pdf-lib"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+    // Configure PDF.js worker
+    if (typeof pdfjsLib !== 'undefined') {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+</script>
+<script src="scripts/main.js"></script>
+<script src="scripts/pdf-editor.js"></script>
+<script src="scripts/check-marketing.js"></script>
+</body>
+</html>
