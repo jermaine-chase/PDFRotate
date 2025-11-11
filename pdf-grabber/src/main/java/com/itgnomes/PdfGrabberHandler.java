@@ -24,11 +24,26 @@ public class PdfGrabberHandler implements RequestHandler<Map<String, Object>, Ma
         context.getLogger().log("Input: " + input);
 
         Map<String, Object> response = new HashMap<>();
+
+        // ✅ Required CORS headers (case and spacing matter)
         Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
         headers.put("Access-Control-Allow-Origin", "*");
-        headers.put("Access-Control-Allow-Methods", "POST, OPTIONS");
-        headers.put("Access-Control-Allow-Headers", "Content-Type");
+        headers.put("Access-Control-Allow-Methods", "OPTIONS,POST,GET");
+        headers.put("Access-Control-Allow-Headers", "Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token");
+        headers.put("Access-Control-Max-Age", "3600"); // optional but helpful for caching
+
+        // --- Identify request method ---
+        Map<String, Object> requestContext = (Map<String, Object>) input.get("requestContext");
+        Map<String, Object> http = requestContext != null ? (Map<String, Object>) requestContext.get("http") : null;
+        String method = http != null ? (String) http.get("method") : "GET";
+
+        // --- Handle OPTIONS (CORS preflight) ---
+        if ("OPTIONS".equalsIgnoreCase(method)) {
+            response.put("statusCode", 200);
+            response.put("headers", headers);
+            response.put("body", "{\"message\": \"CORS preflight OK\"}");
+            return response;
+        }
 
         try {
             // Check if this is an API Gateway proxy request
