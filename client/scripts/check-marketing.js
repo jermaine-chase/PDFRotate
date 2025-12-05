@@ -71,6 +71,8 @@
         matchesEl.textContent = '0';
         failsEl.textContent = '0';
 
+        const lambdaUrl = 'https://uhpkau3cwajzw634qlsfvqipsu0pnpjw.lambda-url.us-east-1.on.aws/';
+
         let mappings = await loadMappingsFromFile(mappingFileEl.files && mappingFileEl.files[0]);
         let urls = extractUrls(urlListEl.value || '');
 
@@ -84,35 +86,50 @@
 
         let matchCount = 0;
         let failCount = 0;
-        for (let i = 0; i < urls.length; i++) {
-            const url = urls[i];
-            const mapping = mappings.find(m => normalizeUrl(m.url) === normalizeUrl(url)) || {};
-            const expected = mapping.expectedName || mapping.name || extractNameFromUrl(url) || null;
-            appendResultRow(url, 'Processing...', 'pending');
-            try {
-                const arrayBuffer = await fetchPdfArrayBuffer(url);
-                // If download requested, trigger save
-                if (downloadCheckbox && downloadCheckbox.checked) {
-                    try {
-                        await triggerDownload(arrayBuffer, filenameFromUrl(url));
-                    } catch (err) {
-                        // fallback to normal anchor download
-                        console.warn('Directory save failed, using fallback anchor download', err);
-                        triggerDownloadFallback(arrayBuffer, filenameFromUrl(url));
+
+        // Process URLs in batches of 10
+        const BATCH_SIZE = 10;
+        for (let batchStart = 0; batchStart < urls.length; batchStart += BATCH_SIZE) {
+            const batch = urls.slice(batchStart, batchStart + BATCH_SIZE);
+
+            // Process batch concurrently
+            await Promise.all(batch.map(async (url) => {
+                const mapping = mappings.find(m => normalizeUrl(m.url) === normalizeUrl(url)) || {};
+                // Use expected name from mapping, or extract from URL query parameter or filename
+                const expected = mapping.expectedName || mapping.name || extractNameFromUrl(url);
+
+                appendResultRow(url, 'Processing...', 'pending');
+                try {
+                    const arrayBuffer = await fetchPdfArrayBuffer(url, lambdaUrl);
+
+                    // If download requested, trigger save
+                    if (downloadCheckbox && downloadCheckbox.checked) {
+                        try {
+                            await savePdfToS3(url);
+                        } catch (err) {
+                            // fallback to normal anchor download
+                            console.warn('Directory save failed, using fallback anchor download', err);
+                        }
                     }
+
+                    const extractedText = await extractTextFromPdfBuffer(arrayBuffer);
+                    const found = findMarketingName(extractedText, searchModeEl ? searchModeEl.value : 'contains');
+                    const match = compareNames(found, expected);
+                    updateResultRow(url, match ? 'Match' : 'Mismatch', match ? 'success' : 'error', { expected, found });
+                    if (match) matchCount++; else failCount++;
+                } catch (err) {
+                    updateResultRow(url, `Error: ${err.message || err}`, 'error');
+                    failCount++;
                 }
-                const extractedText = await extractTextFromPdfBuffer(arrayBuffer);
-                const found = findMarketingName(extractedText, searchModeEl ? searchModeEl.value : 'contains');
-                const match = compareNames(found, expected);
-                updateResultRow(url, match ? 'Match' : 'Mismatch', match ? 'success' : 'error', { expected, found });
-                if (match) matchCount++; else failCount++;
-            } catch (err) {
-                updateResultRow(url, `Error: ${err.message || err}`, 'error');
-                failCount++;
+
+                matchesEl.textContent = String(matchCount);
+                failsEl.textContent = String(failCount);
+            }));
+
+            // Small delay between batches to avoid overwhelming the system
+            if (batchStart + BATCH_SIZE < urls.length) {
+                await delay(300);
             }
-            matchesEl.textContent = String(matchCount);
-            failsEl.textContent = String(failCount);
-            await delay(150);
         }
 
         runBtn.disabled = false;
@@ -176,10 +193,49 @@
         });
     }
 
-    async function fetchPdfArrayBuffer(url) {
-        const resp = await fetch(url);
-        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-        return await resp.arrayBuffer();
+    async function fetchPdfArrayBuffer(url, lambdaUrl) {
+        // Call Lambda function with the PDF URL
+        const resp = await fetch(lambdaUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ url: url })
+        });
+
+        if (!resp.ok) throw new Error(`Lambda HTTP ${resp.status}`);
+
+        const response = await resp.json();
+
+        // Handle API Gateway proxy response format
+        let data;
+        if (response.body && typeof response.body === 'string') {
+            // API Gateway proxy response - body is a JSON string
+            data = JSON.parse(response.body);
+        } else if (response.base64) {
+            // Direct Lambda response
+            data = response;
+        } else {
+            throw new Error('Invalid Lambda response format');
+        }
+
+        // Check for error response
+        if (data.error) {
+            throw new Error(`Lambda error: ${data.error}`);
+        }
+
+        // Decode base64 string to ArrayBuffer
+        if (!data.base64) {
+            throw new Error('Lambda response missing base64 field');
+        }
+
+        const base64String = data.base64;
+        const binaryString = atob(base64String);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        return bytes.buffer;
     }
 
     function filenameFromUrl(url) {
@@ -192,30 +248,22 @@
         }
     }
 
+    async function savePdfToS3(pdfUrl) {
+        const res = await fetch("https://v6rqm4q7fd27wkir5pax2w2fhi0rhmsf.lambda-url.us-east-1.on.aws/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ pdfUrl })
+        });
+
+        const data = await res.json();
+        console.log(data);
+    }
+
+
     async function triggerDownload(arrayBuffer, filename) {
-        // If we have a directory handle, attempt to write there using File System Access API
-        if (downloadDirectoryHandle && downloadDirectoryHandle.getFileHandle) {
-            // Ensure filename ends with .pdf
-            if (!filename.toLowerCase().endsWith('.pdf')) filename += '.pdf';
-            const handle = await downloadDirectoryHandle.getFileHandle(filename, { create: true });
-            const writable = await handle.createWritable();
-            await writable.write(arrayBuffer);
-            await writable.close();
-            return;
-        }
-        // Otherwise fallback to anchor download
-        triggerDownloadFallback(arrayBuffer, filename);
     }
 
     function triggerDownloadFallback(arrayBuffer, filename) {
-        const blob = new Blob([arrayBuffer], { type: 'application/pdf' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = filename.endsWith('.pdf') ? filename : filename + '.pdf';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(() => URL.revokeObjectURL(a.href), 5000);
     }
 
     async function extractTextFromPdfBuffer(arrayBuffer) {
@@ -270,6 +318,17 @@
             if (nameParam) return decodeURIComponent(nameParam);
             const seg = u.pathname.split('/').filter(Boolean).pop() || '';
             return seg.replace(/\.pdf$/i, '').replace(/[-_]/g, ' ');
+        } catch {
+            return '';
+        }
+    }
+
+    function extractFilenameWithoutExtension(url) {
+        try {
+            const u = new URL(url);
+            const filename = u.pathname.split('/').filter(Boolean).pop() || '';
+            // Remove .pdf extension and decode URI component
+            return decodeURIComponent(filename.replace(/\.pdf$/i, ''));
         } catch {
             return '';
         }
